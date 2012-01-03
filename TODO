@@ -1,0 +1,39 @@
+ACTS_AS_INVENTORIZED
+
+Makes models inventorizable
+
+class Item
+  acts_as_inventorizable
+end
+
+class Inventory
+# settings => {:user_class => 'User'} (stored in inventory.yml)
+# Table: inventories
+# columns => {:user_id => 1, :object_id => 1, :object_class => 'Item', :date_in => DateTime, :date_out => DateTime}
+# User is 'polymorphic'. It can be whatever class you set it up to be in the installation.
+# Object is polymorphic object
+# methods => [checkout,checkin,status,history (refers to InventoryHistory),lock,unlock]
+end
+
+class InventoryHistory
+#mongoid columns => [user, datein, dateout, inventory_id, object_id]
+end
+
+User.new(:name => 'Paul Panarese') #=> 1
+Item.new(:name => "TestObject") #=> 1
+item = Item.find(1)
+item.status #=> {:status => 'Available', :checked_out => false, :user => nil}
+item.checkout(User.find(1)) #=> true
+item.status #=> {:status => 'Unavailable', :checked_out => true, :user => <User id:1>}
+item.status.user.name #=> 'Paul Panarese'
+item.current_user #=> <User id:1>
+item.checkin #=> true (will return false if failure to check in)
+item.status #=> {status => 'Unavailable', :checked_out => false, :user => nil}
+item.current_user #=> nil
+item.history #=> [<InventoryHistory id:1 date_in:DateTime date_out:DateTime>]
+item.lock #=> true
+item.checkout(User.find(1)) #=> false
+item.status #=> {:status => 'Locked', :checked_out => false, :user => nil, :locked => true}
+item.unlock #=> true
+item.checkout(User.find(1)) #=> true
+

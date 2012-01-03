@@ -1,0 +1,11 @@
+= acts_as_inventoried v0.1a
+A gem for inventorying objects in your Rails application
+
+== Installation
+  Coming Soon
+
+== Usage
+  Coming Soon
+
+== License
+  See LICENSE
